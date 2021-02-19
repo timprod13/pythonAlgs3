@@ -18,11 +18,11 @@ from time import time
 
 
 def count_time(function):
-    def get_time():
+    def get_time(*args, **kwargs):
         start_time = time()
-        function()
+        function(*args, **kwargs)
         print(time() - start_time)
-        return function()
+        return function(*args, **kwargs)
     return get_time
 
 
@@ -39,18 +39,17 @@ def copy_list():
 
 
 @count_time
-def pop_list():
-    my_list.pop(1)
-    my_list.pop(2)
-    my_list.pop(3)
-    my_list.pop(4)
-    my_list.pop(5)
-    my_list.pop(6)
-    my_list.pop(7)
-    my_list.pop(8)
-    my_list.pop(9)
-    my_list.pop(10)
-    return my_list
+def fetch_list_index():
+    for i in range(len(my_list)):
+        if i == 10000:
+            return i
+
+
+@count_time
+def fetch_list_value():
+    for i in my_list:
+        if i == 10000:
+            return i
 
 
 @count_time
@@ -61,7 +60,7 @@ def del_list():
 
 @count_time
 def add_dict():
-    new_dict = {a: a for a in range(0, 100000)}
+    new_dict = {a: a for a in range(0, 1000000)}
     return new_dict
 
 
@@ -72,18 +71,16 @@ def copy_dict():
 
 
 @count_time
-def pop_dict():
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    my_dict.popitem()
-    return my_dict
+def fetch_dict_key():
+    i = my_dict[10000]
+    return i
+
+
+@count_time
+def fetch_dict_value():
+    for i in my_dict.values():
+        if i == "10000":
+            return i
 
 
 @count_time
@@ -98,11 +95,17 @@ my_dict = add_dict()
 print("Copying list, then dict")
 copy_list()
 copy_dict()
-print("Popping list, then dict")
-pop_list()
-pop_dict()
+print("Finding in list by index, then dict by key")
+fetch_list_index()
+fetch_dict_key()
+print("Finding in list, then dict by value")
+fetch_list_value()
+fetch_dict_value()
 print("Deleting list, then dict")
 del_list()
 del_dict()
-# Время работы со словарем больше, потому что словарь - это по сути хеш-таблица и для работы с ним требуется больше
-# памяти
+# Время работы добавления, копирования и удаления словаря больше, потому что словарь - это по сути хеш-таблица и для
+# работы с хэшами требуется больше памяти.
+# Для выборки элементов в списке потребовалось больше времени, чем для словаря, потому что словарь использует
+# таблицу для реализации упорядочения.
+# По значениям же поиск проводится дольше в словаре.
